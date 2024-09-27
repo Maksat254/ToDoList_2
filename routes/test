@@ -1,0 +1,18 @@
+<?php
+
+use App\Http\Controllers\API\AdminController;
+use App\Http\Controllers\Api\TaskController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/test', function () {
+    return response()->json(['test' => 1212]);
+});
+
+Route::middleware(['auth:api', 'role:admin'])->group(function () {
+    Route::get('/admin/tasks', [AdminController::class, 'index'])->name('admin.tasks.index');
+    Route::get('/admin/tasks/create', [AdminController::class, 'create'])->name('admin.tasks.create');
+    Route::get('/admin/tasks/{task}/edit', [AdminController::class, 'edit'])->name('admin.tasks.edit');
+    Route::put('/admin/tasks/{task}', [AdminController::class, 'update'])->name('admin.tasks.update');
+    Route::delete('/admin/tasks/{task}', [AdminController::class, 'destroy'])->name('admin.tasks.destroy');
+});
+
