@@ -1,4 +1,7 @@
 <template>
+    <Head title="AdminPanel" />
+    <AuthenticatedLayout>
+
     <div class="container mt-5">
         <h1 class="text-center">Админ панель</h1>
 
@@ -93,11 +96,14 @@
             </div>
         </div>
     </div>
+    </AuthenticatedLayout>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+
 
 const props = defineProps({
     users: {
@@ -107,6 +113,7 @@ const props = defineProps({
 });
 
 const tasks = ref([]);
+const token = localStorage.getItem('token');
 const showModal = ref(false);
 const isEditing = ref(false);
 const taskData = ref({
@@ -120,15 +127,19 @@ const taskData = ref({
 });
 
 const fetchTasks = () => {
-    axios.get('/api/admin/tasks').then(response => {
+    axios.get('/admin/tasks', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }}
+    ).then(response => {
         tasks.value = response.data.tasks;
     }).catch(error => {
         console.error('Ошибка при загрузке задач:', error.response ? error.response.data : error.message);
     });
 };
 
-const token = localStorage.getItem('token');
-axios.get('/api/admin/tasks', {
+
+axios.get('/admin/tasks', {
     headers: {
         Authorization: `Bearer ${token}`,
     }
@@ -163,9 +174,11 @@ const closeModal = () => {
 };
 
 const createTask = () => {
-    axios.post('/api/admin/add-task', taskData.value)
-
-        .then(response => {
+    axios.post('/admin/add-task', taskData.value, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }
+    }).then(response => {
             tasks.value.push(response.data.task);
             closeModal();
         })

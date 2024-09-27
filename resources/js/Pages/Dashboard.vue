@@ -83,7 +83,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <Head title="TaskList" />
+    <Head title="AdminPanel" />
 
     <AuthenticatedLayout>
         <div class="container mx-auto p-4">
