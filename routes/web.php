@@ -25,7 +25,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
     Route::get('/admin/add-task', [AdminController::class, 'create']);
     Route::post('/admin/add-task', [AdminController::class, 'store'])->name('admin.add-task');
+    Route::get('/tasks', [AdminController::class, 'index'])->name('admin.tasks.index');
+    Route::put('/tasks/{task}', [AdminController::class, 'update'])->name('admin.update');
+    Route::delete('/tasks/{task}', [AdminController::class, 'destroy'])->name('admin.destroy');
 });
+Route::get('/tasks', [TaskController::class, 'index'])->name('task.index');
+Route::post('/tasks-add', [TaskController::class, 'store'])->name('task.store');
+Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('task.destroy');
+Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('task.update');
 
 
 Route::middleware('auth')->group(function () {

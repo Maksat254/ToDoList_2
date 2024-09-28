@@ -16,17 +16,13 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(UserRoleSeeder::class);
-        // Создание роли 'admin'
         $adminRole = Role::create(['name' => 'admin']);
 
-        // Создание прав
         $editArticlesPermission = Permission::create(['name' => 'edit tasks']);
 
-        // Присваивание прав роли 'admin'
         $adminRole->givePermissionTo($editArticlesPermission);
 
-        // Назначение роли администратору
-        $user = User::find(1); // Найдите пользователя с ID 1
+        $user = User::find(1);
         if ($user) {
             $user->assignRole('admin');
         }

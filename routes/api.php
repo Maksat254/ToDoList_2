@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AdminController;
@@ -10,11 +11,11 @@ Route::get('/user', function (Request $request) {
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/admin/add-task', [AdminController::class, 'create']);
-    Route::post('/admin/add-task', [AdminController::class, 'store'])->name('admin.add-task');
-    Route::get('/admin/tasks', [AdminController::class, 'index'])->name('admin.tasks.index');
-    Route::get('/admin/tasks/create', [AdminController::class, 'create'])->name('admin.tasks.create');
-    Route::get('/admin/tasks/{task}/edit', [AdminController::class, 'edit'])->name('admin.tasks.edit');
-    Route::put('/admin/tasks/{task}', [AdminController::class, 'update'])->name('admin.tasks.update');
-    Route::delete('/admin/tasks/{task}', [AdminController::class, 'destroy'])->name('admin.tasks.destroy');
+    Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
+    Route::post('/tasks/store', [TaskController::class, 'store'])->name('task.store');
+    Route::get('/tasks/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit');
+    Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
+    Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 });
+
+

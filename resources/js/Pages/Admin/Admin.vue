@@ -1,7 +1,4 @@
 <template>
-    <Head title="AdminPanel" />
-    <AuthenticatedLayout>
-
     <div class="container mt-5">
         <h1 class="text-center">Админ панель</h1>
 
@@ -96,13 +93,11 @@
             </div>
         </div>
     </div>
-    </AuthenticatedLayout>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
 
 const props = defineProps({
@@ -126,16 +121,13 @@ const taskData = ref({
     user_id: '',
 });
 
-const fetchTasks = () => {
-    axios.get('/admin/tasks', {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        }}
-    ).then(response => {
-        tasks.value = response.data.tasks;
-    }).catch(error => {
-        console.error('Ошибка при загрузке задач:', error.response ? error.response.data : error.message);
-    });
+const fetchTasks = async () => {
+    try {
+        const response = await axios.get('/admin/tasks');
+        tasks.value = response.data;
+    } catch (error) {
+        console.error('Ошибка при получении задач:', error.response?.data || error.message);
+    }
 };
 
 
@@ -178,7 +170,9 @@ const createTask = () => {
         headers: {
             Authorization: `Bearer ${token}`,
         }
-    }).then(response => {
+    })
+
+        .then(response => {
             tasks.value.push(response.data.task);
             closeModal();
         })
@@ -187,24 +181,29 @@ const createTask = () => {
         });
 };
 
-const updateTask = () => {
-    axios.put(`/api/admin/tasks/${taskData.value.id}`, taskData.value)
-        .then(response => {
-            const index = tasks.value.findIndex(task => task.id === taskData.value.id);
-            if (index !== -1) {
-                tasks.value[index] = response.data.task;
-            } else {
-                console.error('Задача не найдена в списке');
-            }
-            closeModal();
-        })
-        .catch(error => {
-            console.error('Ошибка при обновлении задачи:', error.response ? error.response.data : error.message);
-        });
+const updateTask = async () => {
+    try {
+        const taskData = {
+            title: taskForEdit.value.title,
+            description: taskForEdit.value.description,
+            priority: taskForEdit.value.priority,
+            status: taskForEdit.value.status,
+            start_date: taskForEdit.value.start_date,
+            end_date: taskForEdit.value.end_date,
+        };
+
+        const response = await axios.put(`/admin/tasks/${taskForEdit.value.id}`, taskData); // Обратите внимание на правильный путь
+        console.log('Задача обновлена:', response.data);
+        await fetchTasks();
+        showEditTaskModal.value = false;
+    } catch (error) {
+        console.error('Ошибка при обновлении задачи:', error.response?.data || error.message);
+    }
 };
 
+
 const deleteTask = (id) => {
-    axios.delete(`/api/admin/tasks/${id}`)
+    axios.delete(`/admin/tasks/${id}`)
         .then(() => {
             tasks.value = tasks.value.filter(task => task.id !== id);
         })

@@ -91,9 +91,26 @@ class AdminController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        if (!$request->user() || !$request->user()->hasRole('admin')) {
+            return response()->json(['message' => 'Доступ запрещен.']);
+        }
+
+        $validatedData = $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'priority' => 'required',
+            'status' => 'required|in:new,in_progress,completed',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $task = Task::findOrFail($id);
+        $task->update($validatedData);
+
+        return response()->json(['task' => $task]);
     }
 
     /**

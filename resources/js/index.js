@@ -3,8 +3,7 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
-// Установка заголовка авторизации
-const token = localStorage.getItem('token'); // Предположим, что вы храните токен в localStorage
+const token = localStorage.getItem('token');
 if (token) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 }
@@ -32,6 +31,10 @@ const routes = [
     {
         path: "/admin",
         component: ()=>import("./Pages/Admin/Admin.vue")
+    },
+    {
+        path: '/admin/tasks',
+        component: () => import('./Pages/Dashboard.vue'),
     }
     ]
 
